@@ -21,8 +21,8 @@ os.system("echo \"\" > /home/george/ssh")
 os.system("echo \"\" > /home/george/ssh")
 
 while(True):#care: grepping for fbuary as a temporary fix to remove the difference header.
-    os.system("cat /var/log/auth.log | grep \"sshd:session): session opened\" | grep -v \"grep\" > /home/george/tmp")
-    proc = subprocess.Popen(["diff /home/george/tmp /home/george/ssh | grep \"Feb\""], stdout=subprocess.PIPE, shell=True)
+    os.system("cat /var/log/auth.log | grep \"Accepted password\" | grep ssh | grep -v \"grep\" > /home/george/tmp")
+    proc = subprocess.Popen(["diff /home/george/tmp /home/george/ssh | grep \"<\""], stdout=subprocess.PIPE, shell=True)
     difference = proc.stdout.read()
     if difference != "":
 	entry = spread.update_acell(cell, difference)

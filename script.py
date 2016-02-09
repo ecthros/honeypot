@@ -15,6 +15,18 @@ def start():
     gc = gspread.authorize(credentials)
     return gc
 
+def deleteLine(string):
+    fn= "/home/george/opened_ssh"
+    f = open(fn)
+    output = []
+    for line in f:
+        if not str(string) in line:
+            output.append(line)
+    f.close()
+    f=open(fn, 'w')
+    f.writelines(output)
+    f.close()
+
 def opened(spread, startcell):
     os.system("cat /var/log/auth.log | grep \"sshd:session): session opened\" | grep -v \"grep\" > /home/george/tmp")
     proc = subprocess.Popen(["diff /home/george/tmp /home/george/ssh | grep \"<\""], stdout=subprocess.PIPE, shell=True)
@@ -43,27 +55,28 @@ def closed(spread):
         data = myfile.read()
     data = data[:-1]
     pids = data.split("\n")
-
+    
     for i in pids:
-        pid = i.split(";")[0]
-        proc = subprocess.Popen(["cat /var/log/auth.log | grep \"session closed\" | grep ssh | grep -v grep | grep " + str(pid) + " | wc -l"], stdout = subprocess.PIPE, shell=True)
-        lines=proc.stdout.read()[:-1]
-        if(lines == str(1)):
-            proc = subprocess.Popen(["cat /var/log/auth.log | grep \"session closed\" | grep ssh | grep -v grep | grep " + str(pid)], stdout = subprocess.PIPE, shell=True)
-            line = proc.stdout.read()
-            entry = str(i.split(";")[1])
-            closedentry = spread.update_acell(entry, line[:16])
-            #remove line here next. TODO
-        elif(lines!=str(0)):
-            print str(pid) + "fatal."
-
+        if(i!=""):
+            pid = i.split(";")[0]
+            proc = subprocess.Popen(["cat /var/log/auth.log | grep \"session closed\" | grep ssh | grep -v grep | grep " + str(pid) + " | wc -l"], stdout = subprocess.PIPE, shell=True)
+            lines=proc.stdout.read()[:-1]
+            if(lines == str(1)):
+                proc = subprocess.Popen(["cat /var/log/auth.log | grep \"session closed\" | grep ssh | grep -v grep | grep " + str(pid)], stdout = subprocess.PIPE, shell=True)
+                line = proc.stdout.read()
+                entry = str(i.split(";")[1])
+                closedentry = spread.update_acell(entry, line[:16])
+                deleteLine(i)
+            elif(lines!=str(0)):
+                print str(pid) + "fatal."
+    
 def main():
     startcell = 2
     auth = start()
     spread = auth.open_by_key("1QXFTpHJVI79nLunRp8FJFSufMnjTl6NmW1WM7EAiy4c").sheet1
     
     os.system("echo \"\" > /home/george/ssh")
-    
+    os.system("echo \"\" > /home/george/opened_ssh")    
     while(True):
         startcell = opened(spread, startcell)
         closed(spread)

@@ -53,6 +53,7 @@ def closed(spread):
             line = proc.stdout.read()
             entry = str(i.split(";")[1])
             closedentry = spread.update_acell(entry, line[:16])
+            #remove line here next. TODO
         elif(lines!=str(0)):
             print str(pid) + "fatal."
 

@@ -52,7 +52,6 @@ def opened(spread, startcell, location):
             ipentry = spread.update_acell(str("H")+str(startcell), ip)
             os.system("echo \"" + str(pid) + ";" + str(startcell) + "\" >> " + location + "opened_ssh")
             os.system("cat " + location + "tmp > " + location + "ssh")
-            send("ssh session opened for " + username + " from ip " + ip)
             startcell = startcell+1
 
     os.system("echo \"\" > " + location + "tmp")
@@ -81,6 +80,7 @@ def closed(spread, location):
                 print str(pid) + "fatal."
     
 def main():
+    
     startcell = 2
     auth = start()
     spread = auth.open_by_key("1QXFTpHJVI79nLunRp8FJFSufMnjTl6NmW1WM7EAiy4c").sheet1
@@ -88,10 +88,14 @@ def main():
     os.system("echo \"\" > " + location + "ssh")
     os.system("echo \"\" > " + location + "opened_ssh")    
     send("Starting....")
-    while(True):
-        startcell = opened(spread, startcell, location)
-        closed(spread, location)
-        time.sleep(3)
+    try:
+        while(True):
+            startcell = opened(spread, startcell, location)
+            closed(spread, location)
+            time.sleep(3)
+    except RuntimeError as e:
+        send("SCRIPT ENDING!!" + e.message)
+
 
 main()
 

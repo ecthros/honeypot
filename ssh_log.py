@@ -5,7 +5,6 @@ import gdata.spreadsheet.service
 import json
 from oauth2client.client import SignedJwtAssertionCredentials
 import gspread 
-import httplib, urllib
 
 def send(string):
     bot_id = "8de46c22a3fb6c553a4140336f"
@@ -80,23 +79,24 @@ def closed(spread, location):
                 print str(pid) + "fatal."
     
 def main():
-    
-    startcell = 2
-    auth = start()
-    spread = auth.open_by_key("1QXFTpHJVI79nLunRp8FJFSufMnjTl6NmW1WM7EAiy4c").sheet1
-    location = "/home/george/"
-    os.system("echo \"\" > " + location + "ssh")
-    os.system("echo \"\" > " + location + "opened_ssh")    
-    send("Starting....")
-    try:
-        while(True):
-            startcell = opened(spread, startcell, location)
-            closed(spread, location)
-            time.sleep(3)
-    except RuntimeError as e:
-        send("SCRIPT ENDING!!" + e.message)
-
-
+    while(True):
+        try:
+            startcell = 2
+            auth = start()
+            spread = auth.open_by_key("1QXFTpHJVI79nLunRp8FJFSufMnjTl6NmW1WM7EAiy4c").sheet1
+            location = "/home/george/"
+            os.system("echo \"\" > " + location + "ssh")
+            os.system("echo \"\" > " + location + "opened_ssh")    
+            send("Starting....")
+            while(True):
+                startcell = opened(spread, startcell, location)
+                closed(spread, location)
+                time.sleep(3)
+        except Exception as e:
+            send("Fatal: Script ended.")
+            send("Message: " + e.message)
+        except:
+            send("Fatal: Script ended. No description given ;(")
+            if(raw_input("Type \'kill\' to exit.")=="kill"):
+                exit()
 main()
-
-

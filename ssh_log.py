@@ -31,7 +31,7 @@ def deleteLine(string, location):
     f.close()
 
 def opened(spread, startcell, location):
-    os.system("cat /var/log/auth.log | grep \"Accepted password\" | grep -v \"grep\" > " + location + "tmp")
+    os.system("cat /vz/private/101/var/log/auth.log | grep \"Accepted password\" | grep -v \"grep\" > " + location + "tmp")
     proc = subprocess.Popen(["diff " + location + "tmp " + location + "ssh | grep \"<\""], stdout=subprocess.PIPE, shell=True)
     difference = proc.stdout.read()
     if difference != "":
@@ -66,10 +66,10 @@ def closed(spread, location):
     for i in pids:
         if(i!=""):
             pid = i.split(";")[0]
-            proc = subprocess.Popen(["cat /var/log/auth.log | grep \"session closed\" | grep ssh | grep -v grep | grep " + str(pid) + " | wc -l"], stdout = subprocess.PIPE, shell=True)
+            proc = subprocess.Popen(["cat /vz/private/101/var/log/auth.log | grep \"session closed\" | grep ssh | grep -v grep | grep " + str(pid) + " | wc -l"], stdout = subprocess.PIPE, shell=True)
             lines=proc.stdout.read()[:-1]
             if(lines == str(1)):
-                proc = subprocess.Popen(["cat /var/log/auth.log | grep \"session closed\" | grep ssh | grep -v grep | grep " + str(pid)], stdout = subprocess.PIPE, shell=True)
+                proc = subprocess.Popen(["cat /vz/private/101/var/log/auth.log | grep \"session closed\" | grep ssh | grep -v grep | grep " + str(pid)], stdout = subprocess.PIPE, shell=True)
                 line = proc.stdout.read()
                 entry = str(i.split(";")[1])
                 closedentry = spread.update_acell(str("F") + entry, line[:6])
@@ -83,8 +83,8 @@ def main():
         try:
             startcell = 2
             auth = start()
-            spread = auth.open_by_key("1QXFTpHJVI79nLunRp8FJFSufMnjTl6NmW1WM7EAiy4c").sheet1
-            location = "/home/george/"
+            spread = auth.open_by_key("1s8-vZydMQnxvs1mJeoHqOSnvrVEk-Rfe6o_zptGrb7c").sheet1
+            location = "/honeypot/"
             os.system("echo \"\" > " + location + "ssh")
             os.system("echo \"\" > " + location + "opened_ssh")    
             send("Starting....")

@@ -48,7 +48,7 @@ def internet(name):
 	os.system("vzctl exec " + str(name) + " route add default gw " + gw)
 	os.system("brctl addif br0 veth" + str(name) + ".0")
  	os.system("vzctl set " + str(name) + " --nameserver " + gw + " --save")
-name = "101"
+name = "102"
 kick(name)
 copy(name)
 recycle(name)

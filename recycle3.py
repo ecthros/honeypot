@@ -53,7 +53,7 @@ def internet(name):
 	elif(str(name) == "102"):
 		ip = "128.8.238.103"
 	elif(str(name) == "103"):
-                ip = "128.8.238.119" 	
+		ip = "128.8.238.119"	
 
 	os.system("vzctl set " + str(name) + " --netif_add eth0 --save")
 	os.system("vzctl exec " + str(name) + " ifconfig eth0 " + ip + " netmask " + netmask)
@@ -71,7 +71,7 @@ def internet(name):
 	os.system("vzctl set " + str(name) + " --userpasswd root:password")
 	proc = subprocess.Popen(["vzctl exec " + str(name) + " bash /bin/honssh/start.sh"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
-name = "101"
+name = "103"
 kick(name)
 copy(name)
 recycle(name)
